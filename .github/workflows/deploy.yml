@@ -3,7 +3,7 @@ name: Spring Boot CI/CD to AWS Elastic Beanstalk
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Unzip Spring Boot app
+        run: unzip clout-test-app-2.zip -d clout-test-app-2
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -32,7 +35,7 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          zip -r app.zip target/*.jar
+          zip -r app.zip clout-test-app-2/target/*.jar
           aws elasticbeanstalk create-application-version \
             --application-name ${{ secrets.EB_APPLICATION_NAME }} \
             --version-label v-${{ github.run_number }} \
