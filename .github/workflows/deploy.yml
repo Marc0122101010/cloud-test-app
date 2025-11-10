@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: List files (optional debug to confirm folder structure)
+      # Step 2: Show repo structure (optional, for debugging)
       - name: Show repo structure
         run: ls -R
 
@@ -28,7 +28,6 @@ jobs:
       # Step 4: Build Spring Boot app
       - name: Build Spring Boot app
         run: mvn clean package -DskipTests
-        working-directory: cloud-test-app-2
 
       # Step 5: Configure AWS credentials
       - name: Configure AWS credentials
@@ -41,7 +40,7 @@ jobs:
       # Step 6: Deploy to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
         run: |
-          zip -r app.zip cloud-test-app-2/target/*.jar
+          zip -r app.zip target/*.jar
           aws elasticbeanstalk create-application-version \
             --application-name ${{ secrets.EB_APPLICATION_NAME }} \
             --version-label v-${{ github.run_number }} \
