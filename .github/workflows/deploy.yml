@@ -14,19 +14,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Java
+      # Step 2: List files (optional debug to confirm folder structure)
+      - name: Show repo structure
+        run: ls -R
+
+      # Step 3: Set up Java
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Step 3: Build Spring Boot app
+      # Step 4: Build Spring Boot app
       - name: Build Spring Boot app
         run: mvn clean package -DskipTests
-        working-directory: clout-test-app-2
+        working-directory: cloud-test-app-2
 
-      # Step 4: Configure AWS credentials
+      # Step 5: Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -34,10 +38,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 5: Deploy to Elastic Beanstalk
+      # Step 6: Deploy to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
         run: |
-          zip -r app.zip clout-test-app-2/target/*.jar
+          zip -r app.zip cloud-test-app-2/target/*.jar
           aws elasticbeanstalk create-application-version \
             --application-name ${{ secrets.EB_APPLICATION_NAME }} \
             --version-label v-${{ github.run_number }} \
